@@ -11,10 +11,10 @@ parSim(
   mu = c(0.5, 1, 1.5),
   sigma = c(0.5, 1.5),
   
-  reps = 100,           # repetitions
-  write = TRUE,          # Writing to a file
-  name = "res02",  # Name of the file
-  nCores = 1,            # Number of cores to use
+  reps = 200,                         # repetitions
+  write = TRUE,                       # Writing to a file
+  name = "res_without_covariates_03",  # Name of the file
+  nCores = 1,                         # Number of cores to use
   
   expression = {
     # True parameter values
@@ -40,10 +40,11 @@ parSim(
 
 # To load the results -----------------------------------------------------
 
-datos1 <- read.table("Results_simuls/res01.txt", header=TRUE)
-datos2 <- read.table("Results_simuls/res02.txt", header=TRUE)
+datos1 <- read.table("Simuls/res_without_covariates_01.txt", header=TRUE)
+datos2 <- read.table("Simuls/res_without_covariates_02.txt", header=TRUE)
+datos3 <- read.table("Simuls/res_without_covariates_03.txt", header=TRUE)
 
-datos <- rbind(datos1, datos2)
+datos <- rbind(datos1, datos2, datos3)
 
 datos$case <- with(datos, ifelse(mu==0.5 & sigma==0.5, 1, 
                    ifelse(mu==0.5 & sigma==1.5, 2,
@@ -60,7 +61,7 @@ library(tidyr)
 library(ggplot2)
 library(patchwork)
 
-trim <- 0.2
+trim <- 0.1 # percentage of values to be trimmed
 
 dat <- datos %>% group_by(n, mu, sigma, case) %>% 
   summarise(nobs = n(),
@@ -74,7 +75,7 @@ dat <- datos %>% group_by(n, mu, sigma, case) %>%
 
 dat
 
-
+# Plots
 p1 <- ggplot(dat, aes(x=n, y=bias_mu, colour=case)) +
   geom_line() + 
   ylab(expression(paste("Bias for ", mu)))
