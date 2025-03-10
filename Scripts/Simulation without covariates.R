@@ -40,9 +40,10 @@ parSim(
 
 # To load the results -----------------------------------------------------
 
-datos1 <- read.table("Results_simuls/res01.txt", header = TRUE)
+datos1 <- read.table("Results_simuls/res01.txt", header=TRUE)
+datos2 <- read.table("Results_simuls/res02.txt", header=TRUE)
 
-datos <- rbind(datos1)
+datos <- rbind(datos1, datos2)
 
 datos$case <- with(datos, ifelse(mu==0.5 & sigma==0.5, 1, 
                    ifelse(mu==0.5 & sigma==1.5, 2,
