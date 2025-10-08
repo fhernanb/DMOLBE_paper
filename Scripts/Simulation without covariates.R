@@ -7,13 +7,14 @@ library("parSim")
 
 parSim(
   ### SIMULATION CONDITIONS
-  n = c(50, 100, 150, 200, 300),
+
+  n = seq(from=100, to=1000, by=100),
   mu = c(0.5, 1, 1.5),
   sigma = c(0.5, 1.5),
   
   reps = 2000,                         # repetitions
   write = TRUE,                       # Writing to a file
-  name = "Simuls/sim_without_covariates_07",  # Name of the file
+  name = "Simuls/sim1_08",  # Name of the file
   nCores = 1,                         # Number of cores to use
   
   expression = {
@@ -46,7 +47,7 @@ parSim(
 
 # To load the results -----------------------------------------------------
 
-archivos <- list.files(pattern = "^sim_without_cov.*\\.txt$", 
+archivos <- list.files(pattern = "^sim1.*\\.txt$", 
                        path="Simuls",
                        full.names = TRUE)
 
@@ -89,7 +90,7 @@ dat
 p1 <- ggplot(dat, aes(x=n, y=bias_mu, colour=case)) +
   geom_line() + 
   ylab(expression(paste("Bias for ", mu))) +
-  ylim(min(dat$bias_mu), 0)
+  ylim(min(dat$bias_mu), 0.005)
 
 p2 <- ggplot(dat, aes(x=n, y=bias_si, colour=case)) +
   geom_line() + 

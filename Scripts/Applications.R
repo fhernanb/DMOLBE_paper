@@ -17,8 +17,7 @@ y <- c(8, 16, 15, 24, 26, 26, 38, 43, 46, 45, 57, 64, 65, 73,
 library(DiscreteDists)
 library(gamlss)
 
-mod1 <- gamlss(y~1, sigma.fo=~1, family=DMOLBE,
-               control=gamlss.control(n.cyc=30, trace=TRUE))
+mod1 <- gamlss(y~1, sigma.fo=~1, family=DMOLBE)
 
 summary(mod1)
 
@@ -34,6 +33,24 @@ logLik(mod1)
 AIC(mod1)
 AIC(mod1, k=log(length(y)))
 
+# Competitive models
+mod12 <- gamlss(y~1, sigma.fo=~1, family=DBH)
+inv_logit <- function(x) exp(x) / (1+exp(x))
+inv_logit(coef(mod12, what="mu"))
+logLik(mod12)
+AIC(mod12)
+
+mod13 <- gamlss(y~1, sigma.fo=~1, family=PO)
+exp(coef(mod13, what="mu"))
+logLik(mod13)
+AIC(mod13)
+
+mod14 <- gamlss(y~1, sigma.fo=~1, family=NBI)
+exp(coef(mod14, what="mu"))
+exp(coef(mod14, what="sigma"))
+logLik(mod14)
+AIC(mod14)
+
 # Comparisons
 
 pdf("Figs/cdf_app1.pdf", height=6, width=6)
@@ -46,16 +63,19 @@ plot(emp_cumulative,
 prob_hat <- pDMOLBE(q=sort(y), mu=mu_hat, sigma=sigma_hat)
 points(x=sort(y), y=prob_hat, col="orange", pch=19)
 
+prob_hat <- pDBH(q=sort(y), mu=1)
+points(x=sort(y), y=prob_hat, col="tomato", pch=19)
+
+prob_hat <- pPO(q=sort(y), mu=49.74242)
+points(x=sort(y), y=prob_hat, col="blue3", pch=19)
+
 legend("bottomright", bty="n", pch=19,
-       legend=c("Empirical", "Estimated"),
-       lty=1, col=c("black", "orange"))
+       legend=c("Empirical", "DMOLBE", "DHB", "POISSON"),
+       lty=1, col=c("black", "orange", "tomato", "blue3"))
 
 dev.off()
 
-mod12 <- gamlss(y~1, sigma.fo=~1, family=DBH,
-               control=gamlss.control(n.cyc=500, trace=TRUE))
 
-mod13 <- gamlss(y~1, sigma.fo=~1, family=PO)
 
 
 # Example 2 ---------------------------------------------------------------
@@ -96,6 +116,19 @@ logLik(mod2)
 AIC(mod2)
 AIC(mod2, k=log(length(y)))
 
+
+# Competitive models
+mod22 <- gamlss(y~1, sigma.fo=~1, family=DBH)
+inv_logit <- function(x) exp(x) / (1+exp(x))
+inv_logit(coef(mod22, what="mu"))
+logLik(mod22)
+AIC(mod22)
+
+mod23 <- gamlss(y~1, sigma.fo=~1, family=PO)
+exp(coef(mod23, what="mu"))
+logLik(mod23)
+AIC(mod23)
+
 # Comparisons
 
 pdf("Figs/cdf_app2.pdf", height=6, width=6)
@@ -108,15 +141,19 @@ plot(emp_cumulative,
 prob_hat <- pDMOLBE(q=sort(y), mu=mu_hat, sigma=sigma_hat)
 points(x=sort(y), y=prob_hat, col="orange", pch=19)
 
+prob_hat <- pDBH(q=sort(y), mu=1)
+points(x=sort(y), y=prob_hat, col="tomato", pch=19)
+
+prob_hat <- pPO(q=sort(y), mu=50.057)
+points(x=sort(y), y=prob_hat, col="blue3", pch=19)
+
+
 legend("bottomright", bty="n", pch=19,
-       legend=c("Empirical", "Estimated"),
-       lty=1, col=c("black", "orange"))
+       legend=c("Empirical", "DMOLBE", "DHB", "POISSON"),
+       lty=1, col=c("black", "orange", "tomato", "blue3"))
 
 dev.off()
 
-mod22 <- gamlss(y~1, sigma.fo=~1, family=DBH,
-                control=gamlss.control(n.cyc=500, trace=TRUE))
 
-mod23 <- gamlss(y~1, sigma.fo=~1, family=PO)
 
 
