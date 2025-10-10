@@ -17,11 +17,11 @@ gendat <- function(n) {
 
 parSim(
   ### SIMULATION CONDITIONS
-  n = c(50, 100, 150, 200, 300),
+  n = seq(from=400, to=1000, by=100),
   
-  reps = 1000,                      # repetitions
+  reps = 800,                      # repetitions
   write = TRUE,                    # Writing to a file
-  name = "Simuls/sim_with_covariates_04",  # Name of the file
+  name = "Simuls/sim2_07",  # Name of the file
   nCores = 1,                      # Number of cores to use
   
   expression = {
@@ -51,7 +51,7 @@ parSim(
 
 # To load the results -----------------------------------------------------
 
-archivos <- list.files(pattern = "^sim_with_cov.*\\.txt$", 
+archivos <- list.files(pattern = "^sim2.*\\.txt$", 
                        path="Simuls",
                        full.names = TRUE)
 archivos
