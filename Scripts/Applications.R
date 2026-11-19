@@ -17,7 +17,8 @@ y <- c(8, 16, 15, 24, 26, 26, 38, 43, 46, 45, 57, 64, 65, 73,
 library(DiscreteDists)
 library(gamlss)
 
-mod1 <- gamlss(y~1, sigma.fo=~1, family=DMOLBE)
+mod1 <- gamlss(y~1, sigma.fo=~1, family=DMOLBE,
+               control=gamlss.control(n.cyc=500))
 
 summary(mod1)
 
@@ -34,7 +35,8 @@ AIC(mod1)
 AIC(mod1, k=log(length(y)))
 
 # Competitive models
-mod12 <- gamlss(y~1, sigma.fo=~1, family=DBH)
+mod12 <- gamlss(y~1, sigma.fo=~1, family=DBH,
+                control=gamlss.control(n.cyc=50))
 inv_logit <- function(x) exp(x) / (1+exp(x))
 inv_logit(coef(mod12, what="mu"))
 logLik(mod12)
@@ -51,9 +53,32 @@ exp(coef(mod14, what="sigma"))
 logLik(mod14)
 AIC(mod14)
 
+# Worm plots
+pdf("Figs/wp_app1.pdf", height=3, width=7)
+par(mfrow=c(1, 3))
+my_wp(mod1, ylim.all=4, main="DMOLBE")
+my_wp(mod12, ylim.all=4, main="DBH")
+my_wp(mod13, ylim.all=4, main="PO")
+dev.off()
+
+# Kolmogorov-Smirnov test
+ks.test(x=y, "pDMOLBE", mu=mu_hat, sigma=sigma_hat)
+ks.test(x=y, "pDBH", mu=inv_logit(coef(mod12, what="mu")))
+ks.test(x=y, "pPO", mu=exp(coef(mod13, what="mu")))
+
+
+library(fitdistrplus)
+
+llsurface(data=y, distr="DMOLBE", plot.arg=c("mu", "sigma"),
+          min.arg=c(30, 0.1), max.arg=c(50, 0.5), back.col=TRUE,
+          main="log-likelihood for DMOLBE distribuion",
+          nlev = 20, pal.col = heat.colors(100))
+
+points(x=mu_hat, y=sigma_hat, pch="+", col="red")
+
 # Comparisons
 
-pdf("Figs/cdf_app1.pdf", height=6, width=6)
+#pdf("Figs/cdf_app1.pdf", height=6, width=6)
 
 emp_cumulative <- ecdf(y)
 plot(emp_cumulative, 
@@ -63,19 +88,22 @@ plot(emp_cumulative,
 prob_hat <- pDMOLBE(q=sort(y), mu=mu_hat, sigma=sigma_hat)
 points(x=sort(y), y=prob_hat, col="orange", pch=19)
 
-prob_hat <- pDBH(q=sort(y), mu=1)
+prob_hat <- pDBH(q=sort(y), mu=inv_logit(coef(mod12, what="mu")))
 points(x=sort(y), y=prob_hat, col="tomato", pch=19)
 
-prob_hat <- pPO(q=sort(y), mu=49.74242)
+prob_hat <- pPO(q=sort(y), mu=exp(coef(mod13, what="mu")))
 points(x=sort(y), y=prob_hat, col="blue3", pch=19)
+
+prob_hat <- pNBI(q=sort(y), 
+                 mu=exp(coef(mod14, what="mu")),
+                 sigma=exp(coef(mod14, what="sigma")))
+points(x=sort(y), y=prob_hat, col="red", pch=19)
 
 legend("bottomright", bty="n", pch=19,
        legend=c("Empirical", "DMOLBE", "DHB", "POISSON"),
        lty=1, col=c("black", "orange", "tomato", "blue3"))
 
-dev.off()
-
-
+#dev.off()
 
 
 # Example 2 ---------------------------------------------------------------
@@ -128,6 +156,19 @@ mod23 <- gamlss(y~1, sigma.fo=~1, family=PO)
 exp(coef(mod23, what="mu"))
 logLik(mod23)
 AIC(mod23)
+
+# Worm plots
+pdf("Figs/wp_app2.pdf", height=3, width=7)
+par(mfrow=c(1, 3))
+my_wp(mod2, ylim.all=4, main="DMOLBE")
+my_wp(mod22, ylim.all=4, main="DBH")
+my_wp(mod23, ylim.all=4, main="PO")
+dev.off()
+
+# Kolmogorov-Smirnov test
+ks.test(x=y, "pDMOLBE", mu=mu_hat, sigma=sigma_hat)
+ks.test(x=y, "pDBH", mu=inv_logit(coef(mod22, what="mu")))
+ks.test(x=y, "pPO", mu=exp(coef(mod23, what="mu")))
 
 # Comparisons
 
