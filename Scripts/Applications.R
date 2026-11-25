@@ -35,30 +35,48 @@ AIC(mod1)
 AIC(mod1, k=log(length(y)))
 
 # Competitive models
-mod12 <- gamlss(y~1, sigma.fo=~1, family=DBH,
-                control=gamlss.control(n.cyc=50))
-inv_logit <- function(x) exp(x) / (1+exp(x))
-inv_logit(coef(mod12, what="mu"))
+mod12 <- gamlss(y~1, sigma.fo=~1, family=PO)
+exp(coef(mod12, what="mu"))
 logLik(mod12)
 AIC(mod12)
 
-mod13 <- gamlss(y~1, sigma.fo=~1, family=PO)
-exp(coef(mod13, what="mu"))
+mod13 <- gamlss(y~1, sigma.fo=~1, family=DBH,
+                control=gamlss.control(n.cyc=50))
+inv_logit <- function(x) exp(x) / (1+exp(x))
+inv_logit(coef(mod13, what="mu"))
 logLik(mod13)
 AIC(mod13)
 
-mod14 <- gamlss(y~1, sigma.fo=~1, family=NBI)
+mod14 <- gamlss(y~1, sigma.fo=~1, family=COMPO2,
+                control=gamlss.control(n.cyc = 1000))
 exp(coef(mod14, what="mu"))
-exp(coef(mod14, what="sigma"))
+coef(mod14, what="sigma")
 logLik(mod14)
 AIC(mod14)
 
+mod15 <- gamlss(y~1, sigma.fo=~1, family=NBI)
+exp(coef(mod15, what="mu"))
+exp(coef(mod15, what="sigma"))
+logLik(mod15)
+AIC(mod15)
+
+mod16 <- gamlss(y~1, sigma.fo=~1, family=ZIP)
+exp(coef(mod16, what="mu"))
+inv_logit(coef(mod16, what="sigma"))
+logLik(mod16)
+AIC(mod16)
+
 # Worm plots
+source("Scripts/my_wp.R")
+
 pdf("Figs/wp_app1.pdf", height=3, width=7)
-par(mfrow=c(1, 3))
+par(mfrow=c(2, 3))
 my_wp(mod1, ylim.all=4, main="DMOLBE")
-my_wp(mod12, ylim.all=4, main="DBH")
-my_wp(mod13, ylim.all=4, main="PO")
+my_wp(mod12, ylim.all=4, main="PO")
+my_wp(mod13, ylim.all=4, main="DBH")
+my_wp(mod14, ylim.all=4, main="COMPO2")
+my_wp(mod15, ylim.all=4, main="NBI")
+my_wp(mod16, ylim.all=4, main="ZIP")
 dev.off()
 
 # Kolmogorov-Smirnov test

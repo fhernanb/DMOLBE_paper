@@ -20,16 +20,23 @@ gof <- gofstat(fit, discrete=TRUE)
 gof[c("chisq", "chisqpvalue")]
 
 fit <- gof <- NULL
+fit <- fitdist(y, "PO", start=list(mu=2))
+fit
+gof <- gofstat(fit, discrete=TRUE)
+gof[c("chisq", "chisqpvalue")]
+
+fit <- gof <- NULL
 fit <- fitdist(y, "DBH", start=list(mu=0.5))
 fit
 gof <- gofstat(fit, discrete=TRUE)
 gof[c("chisq", "chisqpvalue")]
 
 fit <- gof <- NULL
-fit <- fitdist(y, "PO", start=list(mu=2))
+fit <- fitdist(y, "COMPO2", start=list(mu=10, sigma=0))
 fit
 gof <- gofstat(fit, discrete=TRUE)
 gof[c("chisq", "chisqpvalue")]
+
 
 fit <- gof <- NULL
 fit <- fitdist(y, "NBI", start=list(mu=0.5, sigma=0.5))
